@@ -10,7 +10,7 @@
   <meta property="og:description" content="Play daily podcast games. Log in once, compete across all games.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://games.donecast.com">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+  <link rel="icon" href="/assets/dc-icon.png">
   <style>
     /* ─── Reset & Base ──────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,8 +22,8 @@
       --border: rgba(255,255,255,0.07);
       --text: #e8e8f0;
       --muted: #7878a0;
-      --brand: #6c5ce7;
-      --brand-glow: rgba(108,92,231,0.25);
+      --brand: #0FA3B1;
+      --brand-glow: rgba(15,163,177,0.25);
     }
 
     html { scroll-behavior: smooth; }
@@ -190,11 +190,11 @@
       align-items: center;
       gap: 8px;
       padding: 5px 14px;
-      background: rgba(108,92,231,0.15);
-      border: 1px solid rgba(108,92,231,0.3);
+      background: rgba(15,163,177,0.12);
+      border: 1px solid rgba(15,163,177,0.35);
       border-radius: 50px;
       font-size: 0.75rem;
-      color: #a29bfe;
+      color: #0FA3B1;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       font-weight: 600;
@@ -210,7 +210,7 @@
     }
 
     .hero h1 .accent {
-      background: linear-gradient(135deg, #a29bfe, #fd79a8);
+      background: linear-gradient(135deg, #0FA3B1, #FFB703);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -230,8 +230,8 @@
       align-items: center;
       gap: 12px;
       padding: 14px 20px;
-      background: rgba(108,92,231,0.1);
-      border: 1px solid rgba(108,92,231,0.25);
+      background: rgba(15,163,177,0.1);
+      border: 1px solid rgba(15,163,177,0.25);
       border-radius: 14px;
       margin-bottom: 36px;
       font-size: 0.875rem;
@@ -368,8 +368,8 @@
       color: #55efc4;
     }
     .tag-beta {
-      background: rgba(108,92,231,0.15);
-      color: #a29bfe;
+      background: rgba(15,163,177,0.12);
+      color: #0FA3B1;
     }
     .tag-coming {
       background: rgba(255,255,255,0.06);
@@ -404,7 +404,7 @@
       align-items: center;
       gap: 6px;
       padding: 9px 18px;
-      background: var(--card-accent, #6c5ce7);
+      background: var(--card-accent, #0FA3B1);
       border: none;
       border-radius: 50px;
       color: white;
@@ -460,7 +460,7 @@
       color: var(--muted);
     }
     .footer-brand {
-      color: #a29bfe;
+      color: #0FA3B1;
       font-weight: 600;
       text-decoration: none;
     }
@@ -485,7 +485,7 @@
   <!-- Header -->
   <header>
     <a class="logo-area" href="/">
-      <span class="logo-icon">🎮</span>
+      <img src="/assets/dc-icon.png" alt="DoneCast" class="logo-icon" style="width:32px;height:32px;object-fit:contain;">
       <div class="logo-text">
         <span class="logo-name">DoneCast Games</span>
         <span class="logo-sub">Play · Rank · Win</span>
