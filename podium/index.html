@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="description" content="PODIUM — The daily podcast ranking game. Rank 5 podcasts and score up to 10/10.">
+  <meta name="theme-color" content="#0a0800">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="PODIUM 🏆 — The Daily Podcast Ranking">
+  <meta property="og:description" content="5 items. 1 perfect order. Can you crack it?">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://podium.donecast.com">
+
+  <title>PODIUM 🏆 — The Daily Podcast Ranking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Games Hub Nav -->
+  <style>
+    body{padding-top:45px !important;}.dc-games-nav{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(10,10,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+    .dc-games-nav a{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:50px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.78rem;font-weight:500;transition:all 0.2s;white-space:nowrap;}
+    .dc-games-nav a:hover{background:rgba(255,255,255,0.12);color:#fff;}
+    .dc-games-nav-title{font-size:0.8rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.5px;}
+  </style>
+  <div class="dc-games-nav">
+    <a href="/">← Games</a>
+    <span class="dc-games-nav-title" id="dc-nav-game-name"></span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════ -->
+  <header class="header" id="app-header">
+    <div class="header-icons">
+      <button class="icon-btn" id="btn-howtoplay" title="How to play" aria-label="How to play">?</button>
+    </div>
+    <div style="text-align:center">
+      <div class="header-title">PODIUM</div>
+      <div class="header-subtitle">🎙️ The Daily Podcast Ranking</div>
+    </div>
+    <div class="header-icons">
+      <button class="icon-btn" id="btn-stats" title="My stats" aria-label="My stats">📊</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       MODALS
+  ═══════════════════════════════════════════ -->
+
+  <!-- How to Play Modal -->
+  <div class="modal-overlay" id="modal-howtoplay" role="dialog" aria-modal="true" aria-labelledby="howtoplay-title">
+    <div class="modal" style="position:relative">
+      <button class="modal-close" id="btn-howtoplay-close" aria-label="Close">×</button>
+      <h2 id="howtoplay-title">🏆 How to Play PODIUM</h2>
+
+      <div class="modal-section">
+        <h3>The Goal</h3>
+        <p>Rank 5 podcast-related items in the correct order based on the given dimension. The closer your ranking to the correct answer, the higher your score.</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>Scoring</h3>
+        <p>Your score is the number of <strong>correct pairs</strong> out of 10 possible. If you rank A before B, and the correct answer also has A before B — that's a correct pair. There are 10 pairs total with 5 items.</p>
+        <div class="score-badges">
+          <span class="score-badge perfect">10/10 🥇 Perfect PODIUM</span>
+          <span class="score-badge silver">8-9 🥈 Silver</span>
+          <span class="score-badge bronze">6-7 🥉 Bronze</span>
+          <span class="score-badge keep">0-5 📻 Keep Listening</span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Emoji Guide</h3>
+        <div class="emoji-guide">
+          <span class="emoji">🟩</span><span>Correct position (exact)</span>
+          <span class="emoji">🟨</span><span>One position off</span>
+          <span class="emoji">🟧</span><span>Two positions off</span>
+          <span class="emoji">🟥</span><span>Three or more positions off</span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Drag &amp; Drop</h3>
+        <p>Drag the ⠿ handle to reorder items on desktop. On mobile, press and hold the handle, then drag up or down.</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>One Puzzle Per Day</h3>
+        <p>A new PODIUM drops every day. Everyone plays the same puzzle — so you can compare scores with friends!</p>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="btn-howtoplay-got-it" style="margin-top:8px">Got it — Let's Play! 🎙️</button>
+    </div>
+  </div>
+
+  <!-- Username Modal -->
+  <div class="modal-overlay" id="modal-username" role="dialog" aria-modal="true">
+    <div class="modal" style="position:relative">
+      <button class="modal-close" id="btn-username-close" aria-label="Close">×</button>
+      <h2>🏷️ Set Your Display Name</h2>
+      <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:12px">This name appears on the PODIUM leaderboard.</p>
+      <form id="username-form" class="username-form">
+        <input
+          type="text"
+          id="username-input"
+          placeholder="e.g. PodcastPro42"
+          maxlength="20"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Username"
+        >
+        <div class="username-hint">2-20 characters. Letters, numbers, and underscores only.</div>
+        <div class="username-error" id="username-error"></div>
+        <button type="submit" class="btn btn-primary btn-full">Save Username</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Auth Gate
+  ═══════════════════════════════════════════ -->
+  <div class="screen" id="screen-auth" role="main">
+    <div class="auth-logo">PODIUM</div>
+    <div class="auth-tagline">
+      <strong>🎙️ The Daily Podcast Ranking</strong>
+      5 items. 1 perfect order. Can you crack it?
+    </div>
+
+    <div class="auth-buttons">
+      <button class="btn btn-google btn-full" id="btn-google-login">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.3 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.8 13.2 17.9 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.6-4.8 7.4l7.5 5.8c4.4-4 6.9-10 6.9-17.2z"/>
+          <path fill="#FBBC04" d="M10.8 28.8A14.5 14.5 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8L2.5 13.3A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.5 10.7l8.3-5.9z"/>
+          <path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.1 0-11.2-3.7-13.2-9l-7.8 6C6.9 42.6 14.8 48 24 48z"/>
+        </svg>
+        Sign in with Google
+      </button>
+
+      <div class="auth-divider">or sign in with email</div>
+
+      <form id="email-login-form" class="auth-email-form">
+        <input type="email" id="auth-email" placeholder="Email" autocomplete="email" required>
+        <input type="password" id="auth-pass" placeholder="Password" autocomplete="current-password" required>
+        <div class="auth-error" id="auth-error"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+
+      <div class="auth-divider">or</div>
+
+      <button class="btn btn-secondary btn-full" id="btn-play-anon">
+        Play Anonymously
+      </button>
+      <p style="font-size:0.75rem;color:var(--text-faint);text-align:center">
+        Anonymous players can't appear on the leaderboard
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Loading
+  ═══════════════════════════════════════════ -->
+  <div class="screen active" id="screen-loading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <span id="loading-msg">Loading today's PODIUM...</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Menu
+  ═══════════════════════════════════════════ -->
+  <div class="screen" id="screen-menu">
+    <div class="container">
+
+      <div class="puzzle-preview">
+        <div class="puzzle-meta">
+          <span class="puzzle-number" id="menu-puzzle-number">#1</span>
+          <span id="menu-puzzle-emoji">🎙️</span>
+          <span id="menu-puzzle-date-label" style="margin-left:auto"></span>
+        </div>
+        <div class="puzzle-question" id="menu-puzzle-question">Loading...</div>
+        <div class="puzzle-direction" id="menu-puzzle-direction"></div>
+      </div>
+
+      <button class="btn btn-primary btn-full" id="btn-play-today" style="margin-bottom:12px">
+        🎙️ Play Today's Puzzle
+      </button>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-secondary btn-full" id="btn-set-username"
+          style="display:none" id="btn-set-username-menu">
+          🏷️ Set Display Name
+        </button>
+        <button class="btn btn-secondary btn-full" id="btn-logout" style="display:none">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Game
+  ═══════════════════════════════════════════ -->
+  <div class="screen" id="screen-game">
+    <div class="container">
+
+      <div class="game-header">
+        <div class="game-puzzle-meta">
+          <span id="game-puzzle-number">#1</span>
+          <span style="color:var(--border)">·</span>
+          <span id="game-puzzle-date"></span>
+        </div>
+
+        <div class="game-question">
+          <div class="question-text" id="game-question-text">Loading...</div>
+          <div class="direction-label" id="game-direction-label"></div>
+        </div>
+
+        <div class="timer-bar">
+          <span class="timer-icon">⏱️</span>
+          <span id="timer-display">0:00</span>
+        </div>
+      </div>
+
+      <!-- Draggable Cards -->
+      <div class="ranking-wrapper">
+        <div class="ranking-anchor ranking-anchor-top" id="anchor-top">
+          <span class="anchor-num">1</span>
+          <span class="anchor-label" id="anchor-top-label">—</span>
+          <span class="anchor-arrow">⬆ put first</span>
+        </div>
+
+        <div class="cards-list" id="cards-list" role="list" aria-label="Ranking cards — drag to reorder">
+          <!-- Cards injected by JS -->
+        </div>
+
+        <div class="ranking-anchor ranking-anchor-bottom" id="anchor-bottom">
+          <span class="anchor-arrow">put last ⬇</span>
+          <span class="anchor-label" id="anchor-bottom-label">—</span>
+          <span class="anchor-num">5</span>
+        </div>
+      </div>
+
+      <div class="submit-area">
+        <button class="btn btn-primary btn-full" id="btn-submit">
+          🏆 Lock In My Ranking
+        </button>
+        <div class="submit-hint">Drag ⠿ to reorder · Timer starts on first drag</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Results
+  ═══════════════════════════════════════════ -->
+  <div class="screen" id="screen-results">
+    <div class="container">
+
+      <div class="results-header">
+        <div class="results-puzzle-label" id="results-puzzle-number">PODIUM #1</div>
+        <div class="score-medal" id="results-medal">🥇</div>
+        <div class="score-display" id="results-score">10/10</div>
+        <div class="score-label" id="results-label">Perfect PODIUM!</div>
+        <div class="results-stats">
+          <div>Time: <span id="results-time">0:00</span></div>
+        </div>
+      </div>
+
+      <!-- Re-renders the revealed cards inline -->
+      <div id="screen-game-replay">
+        <!-- The game screen cards are shown here after reveal -->
+      </div>
+
+      <!-- Share area -->
+      <div class="share-text-area" id="share-text" aria-label="Share text"></div>
+
+      <div class="results-actions">
+        <button class="btn btn-primary" id="btn-share">
+          📋 Copy Result
+        </button>
+        <button class="btn btn-secondary" id="btn-view-leaderboard">
+          🏆 Leaderboard
+        </button>
+      </div>
+
+      <!-- Fun fact -->
+      <div class="fun-fact-box" id="fun-fact-box" style="display:none">
+        <div class="fun-fact-label">📻 Fun Fact</div>
+        <div id="fun-fact-text"></div>
+      </div>
+
+      <!-- Username prompt for anonymous players -->
+      <div id="anon-upgrade-prompt" style="display:none;margin-top:16px;text-align:center">
+        <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:10px">
+          Sign in to save your score and appear on the leaderboard!
+        </p>
+        <button class="btn btn-outline btn-full btn-sign-in-now">Sign In with Google</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Leaderboard
+  ═══════════════════════════════════════════ -->
+  <div class="screen" id="screen-leaderboard">
+    <div class="container">
+
+      <button class="back-btn" data-target="results">← Back to Results</button>
+
+      <div class="screen-title">🏆 Today's Leaderboard</div>
+      <div style="font-size:0.8rem;color:var(--text-faint);margin-bottom:16px" id="lb-total"></div>
+
+      <div id="lb-loading" class="loading-spinner" style="display:none">
+        <div class="spinner"></div>
+        <span>Loading leaderboard...</span>
+      </div>
+
+      <div id="lb-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">🎙️</div>
+        <p>No scores yet today. Be the first!</p>
+      </div>
+
+      <div id="lb-error" class="empty-state" style="display:none;color:var(--text-dim)"></div>
+
+      <div class="leaderboard-list" id="lb-list"></div>
+
+      <div class="lb-your-rank" id="lb-your-rank" style="display:none"></div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: Stats
+  ═══════════════════════════════════════════ -->
+  <div class="screen" id="screen-stats">
+    <div class="container">
+
+      <button class="back-btn" data-target="menu">← Back</button>
+
+      <div class="screen-title">📊 My PODIUM Stats</div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-played">0</div>
+          <div class="stat-label">Played</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-avg">—</div>
+          <div class="stat-label">Avg Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-perfect">0</div>
+          <div class="stat-label">Perfect 10s 🥇</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-streak">0</div>
+          <div class="stat-label">Current Streak 🔥</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-max-streak">0</div>
+          <div class="stat-label">Best Streak</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-best-time">—</div>
+          <div class="stat-label">Best Time</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+        <button class="btn btn-outline btn-full" id="btn-set-username">
+          🏷️ Set Display Name
+        </button>
+        <button class="btn btn-secondary btn-full" id="btn-logout">
+          Sign Out
+        </button>
+      </div>
+
+      <div id="stats-login-prompt" style="display:none;margin-top:12px;text-align:center">
+        <p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:8px">
+          Sign in to sync your stats across devices!
+        </p>
+        <button class="btn btn-outline btn-sign-in-now">Sign In</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       TOAST
+  ═══════════════════════════════════════════ -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════ -->
+  <!-- DEV OVERRIDE — remove before production deploy -->
+  <script>window.PODIUM_API_ORIGIN = 'http://10.109.0.41:8000';</script>
+  <!-- END DEV OVERRIDE -->
+  <script src="auth.js"></script>
+  <script src="game.js"></script>
+
+  <script>
+    // Show/hide auth-dependent UI after boot
+    document.addEventListener('DOMContentLoaded', () => {
+      function updateAuthUI() {
+        const loggedIn = PodiumAuth.isLoggedIn();
+        const user = PodiumAuth.getUser();
+
+        document.querySelectorAll('#btn-logout').forEach(el => {
+          el.style.display = loggedIn ? 'block' : 'none';
+        });
+        document.querySelectorAll('#btn-set-username').forEach(el => {
+          el.style.display = loggedIn ? 'block' : 'none';
+        });
+        document.querySelectorAll('#anon-upgrade-prompt').forEach(el => {
+          el.style.display = (!loggedIn && localStorage.getItem('podium_anon_choice')) ? 'block' : 'none';
+        });
+        document.querySelectorAll('#stats-login-prompt').forEach(el => {
+          el.style.display = !loggedIn ? 'block' : 'none';
+        });
+      }
+
+      PodiumAuth.onAuthChange(updateAuthUI);
+      updateAuthUI();
+    });
+  </script>
+
+</body>
+</html>

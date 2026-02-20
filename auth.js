@@ -1,7 +1,6 @@
 // ═══════════════════════════════════════════════════════════════
 // GAMES HUB — Shared Auth
-// SSO layer for games.donecast.com
-// Sets a .donecast.com cookie so all games can share one session
+// games.donecast.com — same origin = shared localStorage
 // ═══════════════════════════════════════════════════════════════
 
 (function () {
@@ -9,58 +8,30 @@
 
   const API_BASE = 'https://api.donecast.com/api';
 
-  // Shared cookie key — readable by all *.donecast.com subdomains
-  const COOKIE_KEY = 'dc_games_token';
-  const LS_USER_KEY = 'games_hub_user';
+  // Shared keys — readable by all pages on games.donecast.com
+  const TOKEN_KEY  = 'dc_games_token';
+  const REFRESH_KEY = 'dc_games_refresh';
+  const USER_KEY   = 'dc_games_user';
 
-  // ─── Cookie Helpers ───────────────────────────────────────
+  // ─── Storage ──────────────────────────────────────────────
 
-  function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-    return match ? decodeURIComponent(match[1]) : null;
-  }
+  function getToken()        { try { return localStorage.getItem(TOKEN_KEY); }   catch { return null; } }
+  function getRefreshToken() { try { return localStorage.getItem(REFRESH_KEY); } catch { return null; } }
+  function getUser()         { try { const u = localStorage.getItem(USER_KEY); return u ? JSON.parse(u) : null; } catch { return null; } }
 
-  function setCookie(name, value, days) {
-    const maxAge = days ? days * 86400 : 86400;
-    // domain=.donecast.com shares across all subdomains
-    document.cookie = `${name}=${encodeURIComponent(value)}; domain=.donecast.com; path=/; secure; samesite=lax; max-age=${maxAge}`;
-  }
-
-  function deleteCookie(name) {
-    document.cookie = `${name}=; domain=.donecast.com; path=/; max-age=0`;
-  }
-
-  // ─── Token Management ─────────────────────────────────────
-
-  function getToken() {
-    return getCookie(COOKIE_KEY) || null;
-  }
-
-  function setToken(token) {
-    setCookie(COOKIE_KEY, token, 7); // 7-day shared session
-  }
+  function setToken(t)   { try { localStorage.setItem(TOKEN_KEY, t); }         catch {} }
+  function setRefresh(t) { try { localStorage.setItem(REFRESH_KEY, t); }       catch {} }
+  function setUser(u)    { try { localStorage.setItem(USER_KEY, JSON.stringify(u)); } catch {} }
 
   function clearAuth() {
-    deleteCookie(COOKIE_KEY);
-    try { localStorage.removeItem(LS_USER_KEY); } catch {}
-  }
-
-  function isLoggedIn() {
-    return !!getToken();
-  }
-
-  // ─── User Profile ─────────────────────────────────────────
-
-  function getUser() {
     try {
-      const u = localStorage.getItem(LS_USER_KEY);
-      return u ? JSON.parse(u) : null;
-    } catch { return null; }
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(REFRESH_KEY);
+      localStorage.removeItem(USER_KEY);
+    } catch {}
   }
 
-  function setUser(user) {
-    try { localStorage.setItem(LS_USER_KEY, JSON.stringify(user)); } catch {}
-  }
+  function isLoggedIn() { return !!getToken(); }
 
   // ─── Auth Flows ───────────────────────────────────────────
 
@@ -79,15 +50,13 @@
     const hashParams = new URLSearchParams(hash);
     const queryParams = new URLSearchParams(window.location.search);
 
-    const token = hashParams.get('access_token') || queryParams.get('access_token') || queryParams.get('token');
-    const refreshToken = hashParams.get('refresh_token') || queryParams.get('refresh_token');
+    const token   = hashParams.get('access_token')  || queryParams.get('access_token')  || queryParams.get('token');
+    const refresh = hashParams.get('refresh_token') || queryParams.get('refresh_token');
 
     if (token) {
       setToken(token);
-      // Also store refresh token in localStorage for hub use
-      if (refreshToken) {
-        try { localStorage.setItem('games_hub_refresh', refreshToken); } catch {}
-      }
+      if (refresh) setRefresh(refresh);
+      // Redirect to hub root — games will inherit the session via localStorage
       window.location.replace('/');
       return true;
     }
@@ -101,14 +70,12 @@
       const resp = await fetch(`${API_BASE}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (!resp.ok) return null;
+      if (!resp.ok) { clearAuth(); return null; }
       const user = await resp.json();
       setUser(user);
       window.GamesHubAuth._notifyListeners();
       return user;
-    } catch {
-      return null;
-    }
+    } catch { return null; }
   }
 
   // ─── Listener System ──────────────────────────────────────
@@ -120,11 +87,14 @@
   window.GamesHubAuth = {
     isLoggedIn,
     getToken,
+    getRefreshToken,
     getUser,
     loginWithGoogle,
     logout,
     handleAuthCallback,
     fetchProfile,
+    // Token key exposed so games can bootstrap their own auth from hub session
+    TOKEN_KEY,
     onAuthChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },
     _notifyListeners() { listeners.forEach(fn => fn(isLoggedIn(), getUser())); },
   };

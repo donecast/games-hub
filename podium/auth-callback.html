@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PODIUM — Logging In...</title>
+  <style>
+    body {
+      background: #0a0800;
+      color: #f0e6cc;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .loader { text-align: center; }
+    .loader h2 { font-size: 1.2rem; margin-bottom: 8px; color: #f5c518; }
+    .loader p { color: #a89060; font-size: 0.9rem; }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #3d2e00;
+      border-top-color: #f5c518;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .logo { font-size: 2rem; font-weight: 800; letter-spacing: 0.3em; color: #f5c518; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="logo">PODIUM</div>
+    <div class="spinner"></div>
+    <h2>Logging you in...</h2>
+    <p>Redirecting back to PODIUM 🏆</p>
+  </div>
+  <script src="auth.js"></script>
+  <script>
+    // Handle the OAuth callback
+    if (!PodiumAuth.handleAuthCallback()) {
+      // No token found — redirect home
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>
