@@ -1,0 +1,39 @@
+{
+  "date": "2026-02-20",
+  "easy": {
+    "id": "e1-20260220",
+    "theme": "Home Baking",
+    "text": "Baking fresh bread at home is one of life's simple pleasures. Start by measuring the flower carefully — too much makes the dough stiff, too little makes it sticky. Do knot overwork it once it comes together; a gentle touch is all it needs. Most loaves are best maid the night before so the dough has time to rest.",
+    "errors": [
+      { "wrong": "flower", "right": ["flour"] },
+      { "wrong": "knot", "right": ["not"] },
+      { "wrong": "maid", "right": ["made"] }
+    ]
+  },
+  "medium": {
+    "id": "m1-20260220",
+    "theme": "The Remote Work Life",
+    "text": "Remote work has changed how millions of people balance their careers and personal lives. Without a physical office, the boarder between professional and personal time can blur quickly. Building productive habits requires real patients — there are days when distractions pile up and focus is hard to sustain. The right tools can compliment a remote setup beautifully, turning a spare room into an efficient workspace. Workers who reed thoughtfully about productivity tend to find strategies that help them stay connected and effective from anywhere, preserving the natural cords of teamwork that an office once provided automatically.",
+    "errors": [
+      { "wrong": "boarder", "right": ["border"] },
+      { "wrong": "patients", "right": ["patience"] },
+      { "wrong": "compliment", "right": ["complement"] },
+      { "wrong": "reed", "right": ["read"] },
+      { "wrong": "cords", "right": ["chords"] }
+    ]
+  },
+  "hard": {
+    "id": "h1-20260220",
+    "theme": "AI and Society",
+    "text": "As artificial intelligence becomes more deeply embedded in daily life, the principals of ethical design have never mattered more. Systems trained on vast amounts of human behavior carry with them the biases and blind spots of their creators, and the affect on vulnerable communities can be both lasting and severe. Over the coarse of just a few years, major tech corporations have accumulated extraordinary power over personal information. Developers who sought council from privacy advocates early on often found their concerns dismissed by executives far more interested in prophets than in safeguards. Independent researchers who have poured over thousands of bias reports argue that the industry must now adopt more discrete standards for handling sensitive data — treating transparency not as a reputational liability, but as a founding principle of trustworthy design that serves people, not just the platforms built to profit from them.",
+    "errors": [
+      { "wrong": "principals", "right": ["principles"] },
+      { "wrong": "affect", "right": ["effect"] },
+      { "wrong": "coarse", "right": ["course"] },
+      { "wrong": "council", "right": ["counsel"] },
+      { "wrong": "prophets", "right": ["profits"] },
+      { "wrong": "poured", "right": ["pored"] },
+      { "wrong": "discrete", "right": ["discreet"] }
+    ]
+  }
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MISCAST — The Daily Podcast Puzzle</title>
+  <meta name="description" content="Find the miscast words in today's podcast transcript. A free daily word puzzle by DoneCast.">
+  <meta name="theme-color" content="#08081a">
+  <meta property="og:title" content="MISCAST — The Daily Podcast Puzzle">
+  <meta property="og:description" content="Your AI transcription had a rough day. Can you spot the sound-alike imposters? Play free daily at miscast.donecast.com">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://miscast.donecast.com">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Games Hub Nav -->
+  <style>
+    body{padding-top:45px !important;}.dc-games-nav{position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(10,10,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;}
+    .dc-games-nav a{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:50px;color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.78rem;font-weight:500;transition:all 0.2s;white-space:nowrap;}
+    .dc-games-nav a:hover{background:rgba(255,255,255,0.12);color:#fff;}
+    .dc-games-nav-title{font-size:0.8rem;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.5px;}
+  </style>
+  <div class="dc-games-nav">
+    <a href="/">← Games</a>
+    <span class="dc-games-nav-title" id="dc-nav-game-name"></span>
+  </div>
+  <div id="app">
+    <header>
+      <div class="header-left">
+        <button id="help-btn" aria-label="How to Play">?</button>
+        <button id="back-btn" aria-label="Back to Menu" style="display:none">←</button>
+      </div>
+      <div class="header-center">
+        <h1>MISCAST</h1>
+        <div class="subtitle">🎙️ The Daily Podcast Puzzle</div>
+      </div>
+      <div class="header-right">
+        <button id="lb-btn" aria-label="Leaderboard">🏆</button>
+        <button id="stats-btn" aria-label="Statistics">📊</button>
+      </div>
+    </header>
+
+    <!-- ═══ Menu Screen ═══ -->
+    <div id="screen-menu" class="screen">
+      <div class="menu-heading">Puzzle #<span id="menu-puzzle-num">1</span> — Choose Your Difficulty</div>
+
+      <div class="difficulty-cards">
+        <div class="diff-card" data-difficulty="easy">
+          <div class="diff-emoji">🟢</div>
+          <div class="diff-info">
+            <div class="diff-label">Easy</div>
+            <div class="diff-desc">3 imposters · shorter passage · 4 takes</div>
+          </div>
+        </div>
+        <div class="diff-card" data-difficulty="medium">
+          <div class="diff-emoji">🟡</div>
+          <div class="diff-info">
+            <div class="diff-label">Medium</div>
+            <div class="diff-desc">5 imposters · moderate passage · 5 takes</div>
+          </div>
+        </div>
+        <div class="diff-card" data-difficulty="hard">
+          <div class="diff-emoji">🔴</div>
+          <div class="diff-info">
+            <div class="diff-label">Hard</div>
+            <div class="diff-desc">7 imposters · longer passage · 5 takes</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="today-progress" class="today-progress"></div>
+      <div id="menu-streak" class="streak-banner" style="display:none"></div>
+    </div>
+
+    <!-- ═══ Game Screen ═══ -->
+    <div id="screen-game" class="screen">
+      <div id="puzzle-info">
+        <span class="puzzle-number">#<span id="game-puzzle-num">1</span></span>
+        <span id="game-diff-badge" class="puzzle-diff-badge">Medium</span>
+        <span class="puzzle-theme" id="game-puzzle-theme"></span>
+      </div>
+
+      <div id="status-bar">
+        <div id="takes">🎙️🎙️🎙️🎙️🎙️</div>
+        <div id="timer">0:00</div>
+        <div id="found-count">0/5 found</div>
+      </div>
+
+      <div id="passage"></div>
+
+      <div id="input-panel">
+        <div class="panel-backdrop"></div>
+        <div class="input-panel-content">
+          <div id="selected-word-display"></div>
+          <div class="input-row">
+            <input type="text" id="correction-input" placeholder="What should it be?" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button id="submit-btn">✓</button>
+          </div>
+          <div id="input-feedback"></div>
+          <button class="cancel-link" id="cancel-input">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Game Over Modal ═══ -->
+    <div id="game-over-modal" class="modal">
+      <div class="modal-content">
+        <h2 id="result-title"></h2>
+        <div id="result-emoji"></div>
+        <div id="result-time"></div>
+        <div id="result-details"></div>
+        <div id="corrections-reveal"></div>
+        <button id="share-btn">Share Results 📋</button>
+        <button id="results-back-btn" class="modal-action-btn secondary">← Play Another Difficulty</button>
+        <div id="next-puzzle-timer"></div>
+        <div class="donecast-cta">
+          <p>Made with 🎙️ by <a href="https://donecast.com" target="_blank" rel="noopener">DoneCast</a></p>
+          <p class="cta-sub">Start your podcast today</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Help Modal ═══ -->
+    <div id="help-modal" class="modal">
+      <div class="modal-content">
+        <h2>How to Play</h2>
+        <div class="help-content">
+          <p>Your AI transcription software had a rough day. Words have been replaced with similar-sounding imposters.</p>
+          <div class="help-steps">
+            <div class="help-step"><span class="step-icon">🎯</span><span>Pick a difficulty — play all three every day!</span></div>
+            <div class="help-step"><span class="step-icon">👆</span><span>Tap any word you think is <strong>miscast</strong></span></div>
+            <div class="help-step"><span class="step-icon">✏️</span><span>Type what the word <strong>should</strong> be</span></div>
+            <div class="help-step"><span class="step-icon">🟢</span><span>Correct finds light up green</span></div>
+            <div class="help-step"><span class="step-icon">🎙️</span><span>Wrong clicks cost a <strong>take</strong></span></div>
+            <div class="help-step"><span class="step-icon">⏱️</span><span>You're timed — speed is the leaderboard tiebreaker!</span></div>
+          </div>
+          <p class="help-note">Spot the right word but misspell the fix? No penalty — try again!</p>
+        </div>
+        <button class="modal-close-btn" id="help-close">Got it!</button>
+      </div>
+    </div>
+
+    <!-- ═══ Stats Modal ═══ -->
+    <div id="stats-modal" class="modal">
+      <div class="modal-content">
+        <h2>Statistics</h2>
+        <div id="stats-grid"></div>
+        <div class="stats-section-title">By Difficulty</div>
+        <div id="stats-difficulty-breakdown"></div>
+        <div id="stats-auth-section"></div>
+        <button class="modal-close-btn" id="stats-close">Close</button>
+      </div>
+    </div>
+
+    <!-- ═══ Leaderboard Modal ═══ -->
+    <div id="leaderboard-modal" class="modal">
+      <div class="modal-content">
+        <h2>🏆 Leaderboard</h2>
+        <div id="lb-date-label" style="text-align:center;color:var(--text-secondary);font-size:0.85rem;margin-bottom:12px">Yesterday's Results</div>
+        <div id="lb-diff-tabs" style="display:flex;gap:6px;margin-bottom:16px">
+          <button class="lb-tab active" data-diff="easy" style="flex:1;padding:8px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-surface);color:var(--easy);font-weight:700;font-size:0.8rem;cursor:pointer">🟢 Easy</button>
+          <button class="lb-tab" data-diff="medium" style="flex:1;padding:8px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-surface);color:var(--medium);font-weight:700;font-size:0.8rem;cursor:pointer">🟡 Medium</button>
+          <button class="lb-tab" data-diff="hard" style="flex:1;padding:8px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg-surface);color:var(--hard);font-weight:700;font-size:0.8rem;cursor:pointer">🔴 Hard</button>
+        </div>
+        <div id="lb-content" style="min-height:100px">
+          <div id="lb-loading" style="text-align:center;color:var(--text-muted);padding:30px 0">Loading...</div>
+          <div id="lb-entries"></div>
+          <div id="lb-empty" style="text-align:center;color:var(--text-muted);padding:30px 0;display:none">No scores yet for this day. Be the first!</div>
+          <div id="lb-error" style="text-align:center;color:var(--accent);padding:20px 0;display:none"></div>
+        </div>
+        <div id="lb-your-rank" style="text-align:center;margin-top:12px;padding:10px;background:var(--bg-surface);border-radius:var(--radius);border:1px solid var(--border);display:none"></div>
+        <div id="lb-auth-prompt" style="text-align:center;margin-top:16px;padding:14px;background:var(--bg-surface);border-radius:var(--radius);border:1px dashed var(--border)">
+          <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:8px">Sign in to join the leaderboard!</p>
+          <button id="lb-login-btn" style="background:var(--accent);color:white;border:none;border-radius:var(--radius);padding:10px 24px;font-weight:700;cursor:pointer;font-family:var(--font)">Sign in with Google</button>
+        </div>
+        <button class="modal-close-btn" id="lb-close" style="background:var(--bg-surface);color:var(--text-secondary);border:1px solid var(--border)">Close</button>
+      </div>
+    </div>
+
+    <!-- ═══ Username Modal ═══ -->
+    <div id="username-modal" class="modal">
+      <div class="modal-content" style="text-align:center">
+        <h2>Choose Your Name</h2>
+        <p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:16px">Pick a username for the MISCAST leaderboard</p>
+        <input type="text" id="username-input" placeholder="3-20 chars, letters/numbers/-/_" maxlength="20" style="width:100%;background:var(--bg-deep);border:2px solid var(--border-light);border-radius:var(--radius);padding:12px 16px;font-size:1.1rem;color:var(--text-primary);font-family:var(--font);outline:none;text-align:center;margin-bottom:8px" autocomplete="off" autocorrect="off" spellcheck="false">
+        <div id="username-feedback" style="font-size:0.8rem;min-height:1.2em;margin-bottom:12px"></div>
+        <button id="username-save-btn" class="modal-close-btn">Save Username</button>
+        <button id="username-skip-btn" class="cancel-link" style="margin-top:8px">Skip for now</button>
+      </div>
+    </div>
+
+    <footer>
+      <a href="https://donecast.com" target="_blank" rel="noopener">🎙️ DoneCast — Start your podcast today</a>
+    </footer>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>window.MISCAST_API_ORIGIN = "https://api.donecast.com";</script>
+  <script src="puzzles.js"></script>
+  <script src="auth.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

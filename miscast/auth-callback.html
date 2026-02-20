@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MISCAST — Logging In...</title>
+  <style>
+    body { background: #08081a; color: #e8e8f0; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .loader { text-align: center; }
+    .loader h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .loader p { color: #8888aa; font-size: 0.9rem; }
+    .spinner { width: 40px; height: 40px; border: 3px solid #2a2a4a; border-top-color: #ff4757; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div class="spinner"></div>
+    <h2>Logging you in...</h2>
+    <p>Redirecting back to MISCAST</p>
+  </div>
+  <script src="auth.js"></script>
+  <script>
+    // Handle the OAuth callback
+    if (!MiscastAuth.handleAuthCallback()) {
+      // No token found — redirect home
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>

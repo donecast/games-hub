@@ -1,0 +1,39 @@
+{
+  "date": "2026-02-18",
+  "easy": {
+    "id": "e1-20260218",
+    "theme": "Getting Started",
+    "text": "Starting a podcast is easier than most people think. You do not kneed expensive equipment or a fancy studio too get started. All you really need is a quiet room and a descent microphone.",
+    "errors": [
+      { "wrong": "kneed", "right": ["need"] },
+      { "wrong": "too", "right": ["to"] },
+      { "wrong": "descent", "right": ["decent"] }
+    ]
+  },
+  "medium": {
+    "id": "m1-20260218",
+    "theme": "The Future of Podcasting",
+    "text": "Podcasting has scene tremendous growth in the passed few years, with new shows launching every weak. Industry experts say the medium continues to altar how people consume news and entertainment, making it perhaps the most personal and immersive manor of storytelling available today.",
+    "errors": [
+      { "wrong": "scene", "right": ["seen"] },
+      { "wrong": "passed", "right": ["past"] },
+      { "wrong": "weak", "right": ["week"] },
+      { "wrong": "altar", "right": ["alter"] },
+      { "wrong": "manor", "right": ["manner"] }
+    ]
+  },
+  "hard": {
+    "id": "h1-20260218",
+    "theme": "The Podcasting Boom",
+    "text": "The history of podcasting is a fascinating tail of technological innovation meeting creative ambition. What began as a niche hobby for tech enthusiasts has since become a global phenomenon, with millions of shows competing for attention across every conceivable genre. The barriers to entry have never been lower, witch means anyone with a microphone and an Internet connection can share their voice with the world. But this accessibility has also created an incredibly competitive landscape wear standing out requires more than just showing up. Successful podcasters understand that building an audience demands consistency, authenticity, and a willingness to adapt. Those who treat there show as a business rather than a casual past thyme tend to see the best results, often discovering that the patients required to grow a loyal following is the same quality that makes them grate hosts in the first place.",
+    "errors": [
+      { "wrong": "tail", "right": ["tale"] },
+      { "wrong": "witch", "right": ["which"] },
+      { "wrong": "wear", "right": ["where"] },
+      { "wrong": "there", "right": ["their"] },
+      { "wrong": "thyme", "right": ["time"] },
+      { "wrong": "patients", "right": ["patience"] },
+      { "wrong": "grate", "right": ["great"] }
+    ]
+  }
+}
