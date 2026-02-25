@@ -184,6 +184,30 @@
     }
   }
 
+  async function checkCookieSession() {
+    if (isLoggedIn()) return true;
+    try {
+      // Call the SSO session endpoint with credentials included (cookies)
+      const resp = await fetch(`${API_BASE}/auth/session`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (!resp.ok) return false;
+      const data = await resp.json();
+      if (data.access_token) {
+        setToken(data.access_token);
+        if (data.refresh_token) setRefreshToken(data.refresh_token);
+        // Also write to shared hub key so other games share this
+        try { localStorage.setItem(HUB_TOKEN_KEY, data.access_token); } catch {}
+        await fetchProfile();
+        return true;
+      }
+    } catch (err) {
+      console.debug('[SSO] No cookie session available');
+    }
+    return false;
+  }
+
   // ─── Game API Calls ───────────────────────────────────────
 
   async function submitScore(scoreData) {
@@ -229,6 +253,7 @@
     logout,
     handleAuthCallback,
     fetchProfile,
+    checkCookieSession,
     submitScore,
     getLeaderboard,
     getStats,

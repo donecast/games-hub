@@ -78,6 +78,28 @@
     } catch { return null; }
   }
 
+  async function checkCookieSession() {
+    if (isLoggedIn()) return true;
+    try {
+      // Call the SSO session endpoint with credentials included (cookies)
+      const resp = await fetch(`${API_BASE}/auth/session`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (!resp.ok) return false;
+      const data = await resp.json();
+      if (data.access_token) {
+        setToken(data.access_token);
+        if (data.refresh_token) setRefresh(data.refresh_token);
+        await fetchProfile();
+        return true;
+      }
+    } catch (err) {
+      console.debug('[SSO] No cookie session available');
+    }
+    return false;
+  }
+
   // ─── Listener System ──────────────────────────────────────
 
   const listeners = new Set();
@@ -93,6 +115,7 @@
     logout,
     handleAuthCallback,
     fetchProfile,
+    checkCookieSession,
     // Token key exposed so games can bootstrap their own auth from hub session
     TOKEN_KEY,
     onAuthChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },

@@ -25,11 +25,21 @@
 
   // ─── Boot ─────────────────────────────────────────────────────
 
-  function init() {
+  async function init() {
     loadDayState();
     showScreen('menu');
     renderMenu();
     bindGlobalEvents();
+    
+    // Attempt SSO via cookies if not logged in
+    if (!MiscastAuth.isLoggedIn()) {
+      try {
+        await MiscastAuth.checkCookieSession();
+      } catch (err) {
+        console.debug('[SSO] Cookie check failed:', err);
+      }
+    }
+    
     updateAuthUI();
 
     // Show auth gate unless already logged in or explicitly chose anon

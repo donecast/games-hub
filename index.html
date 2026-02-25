@@ -253,8 +253,19 @@
   }
   function handleSignOut() { GamesHubAuth.logout(); updateUI(false, null); }
   GamesHubAuth.onAuthChange(updateUI);
+  
+  // Initial UI update from current state
   updateUI(GamesHubAuth.isLoggedIn(), GamesHubAuth.getUser());
-  if (GamesHubAuth.isLoggedIn()) {
+  
+  // Attempt to pick up existing DoneCast session via cookies (SSO)
+  if (!GamesHubAuth.isLoggedIn()) {
+    GamesHubAuth.checkCookieSession().then(hasSession => {
+      if (hasSession) {
+        updateUI(true, GamesHubAuth.getUser());
+      }
+    });
+  } else {
+    // Already has a token, refresh profile
     GamesHubAuth.fetchProfile().then(u => { if (u) updateUI(true, u); });
   }
 </script>

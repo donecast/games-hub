@@ -184,7 +184,7 @@
     const gBtn = document.getElementById('btn-google-login');
     if (gBtn && !gBtn._bound) {
       gBtn._bound = true;
-      gBtn.addEventListener('click', () => PodiumAuth.loginWithGoogle());
+      gBtn.addEventListener('click', () => window.location.href = "https://games.donecast.com");
     }
     const anonBtn = document.getElementById('btn-play-anon');
     if (anonBtn && !anonBtn._bound) {
@@ -895,18 +895,15 @@
     loadState();
     loadStats();
 
-    // Check if already authed or anon
-    const isAnon = localStorage.getItem(ANON_KEY);
+    // Try to pick up an existing DoneCast session via shared-domain cookie
+    if (!PodiumAuth.isLoggedIn()) {
+      try { await PodiumAuth.checkCookieSession(); } catch {}
+    }
 
     if (PodiumAuth.isLoggedIn()) {
-      // Load profile lazily
       PodiumAuth.fetchProfile().catch(() => {});
-      await initGame();
-    } else if (isAnon) {
-      await initGame();
-    } else {
-      renderAuthGate();
     }
+    await initGame();
   }
 
   // ─── Event Wiring ─────────────────────────────────────────────
@@ -983,7 +980,7 @@
 
     // Sign in from results/other screens
     document.querySelectorAll('.btn-sign-in-now').forEach(btn => {
-      btn.addEventListener('click', () => PodiumAuth.loginWithGoogle());
+      btn.addEventListener('click', () => window.location.href = "https://games.donecast.com");
     });
 
     // Start the game

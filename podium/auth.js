@@ -12,14 +12,11 @@
   const AUTH_TOKEN_KEY = 'podium_auth_token';
   const REFRESH_TOKEN_KEY = 'podium_refresh_token';
   const USER_KEY = 'podium_user';
-  const HUB_TOKEN_KEY = 'dc_games_token';
 
   // ─── Token Management ─────────────────────────────────────
 
   function getToken() {
-    try {
-      return localStorage.getItem(AUTH_TOKEN_KEY) || localStorage.getItem(HUB_TOKEN_KEY) || null;
-    } catch { return null; }
+    try { return localStorage.getItem(AUTH_TOKEN_KEY); } catch { return null; }
   }
 
   function setToken(token) {
@@ -113,7 +110,7 @@
 
   function loginWithGoogle() {
     const origin = encodeURIComponent(window.location.origin);
-    window.location.href = `${API_BASE}/auth/login/google?return_to=${origin}&return_path=/podium/auth-callback.html`;
+    window.location.href = `${API_BASE}/auth/login/google?return_to=${origin}&return_path=/auth-callback.html`;
   }
 
   async function loginWithEmail(email, password) {
@@ -154,8 +151,7 @@
     if (token) {
       setToken(token);
       if (refreshToken) setRefreshToken(refreshToken);
-      try { localStorage.setItem(HUB_TOKEN_KEY, token); } catch {}
-      window.location.replace('/podium/');
+      window.location.replace('/');
       return true;
     }
     return false;
@@ -210,6 +206,27 @@
     return apiCall(`/game/username/check?username=${encodeURIComponent(username)}`);
   }
 
+  // ─── Cross-subdomain cookie session ────────────────────────
+
+  async function checkCookieSession() {
+    if (isLoggedIn()) return true;
+    try {
+      const resp = await fetch(`${API_BASE}/auth/session`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (!resp.ok) return false;
+      const data = await resp.json();
+      if (data.access_token) {
+        setToken(data.access_token);
+        if (data.refresh_token) setRefreshToken(data.refresh_token);
+        await fetchProfile();
+        return true;
+      }
+    } catch { /* no cookie session available */ }
+    return false;
+  }
+
   // ─── Event System ─────────────────────────────────────────
 
   const listeners = new Set();
@@ -225,6 +242,7 @@
     logout,
     handleAuthCallback,
     fetchProfile,
+    checkCookieSession,
     getPuzzleToday,
     getPuzzleReveal,
     submitScore,
